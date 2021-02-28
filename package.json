@@ -13,7 +13,7 @@
   },
   "scripts": {
     "test": "cargo +nightly test -- --nocapture",
-    "build-wasm": "cargo +nightly build --target wasm32-unknown-unknown --release && wasm-bindgen target/wasm32-unknown-unknown/release/xlsx_import.wasm --no-modules --out-dir ./wasm",
+    "build-wasm": "cargo build --target wasm32-unknown-unknown --release && wasm-bindgen target/wasm32-unknown-unknown/release/xlsx_import.wasm --target web --out-dir ./wasm",
     "build": "yarn rollup -c"
   },
   "main": "index.js",

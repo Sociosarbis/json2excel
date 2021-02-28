@@ -364,5 +364,6 @@ var example = {
     "borderTop": "1px solid #000",
     "borderLeft": "1px solid #000"
   }
-]
+],
+wasmPath: './wasm/xlsx_import.js'
 }

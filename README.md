@@ -137,6 +137,13 @@ interface IStyle {
 }
 ```
 
+## whistle rules for example app
+```bash
+www.abc.com/index.js file://<project_path>\index.js
+www.abc.com/wasm file://<project_path>\wasm\ headerReplace://res.Content-Type:/.*/=application/wasm
+www.abc.com/ file://<project_path>\example\
+www.abc.com file://<project_path>\example\index.html
+```
 
 ### License 
 

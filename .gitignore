@@ -2,3 +2,4 @@
 /node_modules
 **/*.rs.bk
 index.js
+wasm
