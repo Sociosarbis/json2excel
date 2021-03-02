@@ -23,7 +23,7 @@
         const dataArea = document.querySelector(".spreadsheet-data");
         dataArea.value = JSON.stringify(example, undefined, 2);
 
-        const worker = new Worker("../index.js");
+        const worker = new Worker("../json2excel.worker.js");
 
         function doConvert(){
             worker.postMessage({ 
@@ -44,7 +44,7 @@
                 a.download = "data.xlsx";
                 document.body.append(a);
                 a.click();
-                document.body.remove(a);
+                document.body.removeChild(a);
             }
         });
     </script>

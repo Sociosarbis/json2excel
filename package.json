@@ -1,7 +1,7 @@
 {
   "name": "json2excel-wasm",
   "description": "WASM based web worker for generating excel files from json",
-  "keywords": "excel, convert, wasm",
+  "keywords": ["excel", "convert", "wasm"],
   "version": "1.0.2",
   "license": "MIT",
   "author": {
@@ -13,8 +13,8 @@
   },
   "scripts": {
     "test": "cargo +nightly test -- --nocapture",
-    "build-wasm": "cargo build --target wasm32-unknown-unknown --release && wasm-bindgen target/wasm32-unknown-unknown/release/xlsx_import.wasm --target web --out-dir ./wasm",
-    "build": "yarn rollup -c"
+    "build-wasm": "wasm-pack build --target web --out-dir ./wasm",
+    "build": "rollup -c"
   },
   "main": "index.js",
   "files": [
