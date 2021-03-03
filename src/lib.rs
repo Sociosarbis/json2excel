@@ -319,15 +319,13 @@ fn get_styles_data(style_table: StyleTable) -> String {
         });
 
         xf.add_attr("borderId", "0");
-        match align {
-            Some(ref align) => {
+        if !align.is_empty() {
+            xf.add_attr("applyAlignment", "1");
+            xf.add_children(align.iter().map(|a| {
                 let mut alignment = Element::new("alignment");
-                alignment.add_attr("horizontal", align.to_string());
-                xf
-                    .add_attr("applyAlignment", "1")
-                    .add_children(vec![alignment]);
-            },
-            None => ()
+                alignment.add_attr(a.direction.to_owned(), a.alignment.to_owned());
+                alignment
+            }).collect());
         }
         
         xf

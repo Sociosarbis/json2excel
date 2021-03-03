@@ -16,10 +16,16 @@ pub struct Fill {
     pub color: Option<String>
 }
 
+#[derive(Debug, PartialEq)]
+pub struct Align {
+    pub direction: String,
+    pub alignment: String
+}
+
 pub struct StyleTable {
     pub fonts: Vec<Font>,
     pub fills: Vec<Fill>,
-    pub xfs: Vec<(Option<usize>, Option<usize>, Option<u32>, Option<String>)>,
+    pub xfs: Vec<(Option<usize>, Option<usize>, Option<u32>, Vec<Align>)>,
     pub custom_formats: HashMap<String, u32>,
     next_custom_format: u32
 }
@@ -39,7 +45,7 @@ impl StyleTable {
                     table.add(style);
                 }
             },
-            None => table.xfs.push((Some(0), Some(0), None, None))
+            None => table.xfs.push((Some(0), Some(0), None, vec![]))
         }
 
         table
@@ -123,10 +129,10 @@ impl Font {
     }
 }
 
-fn style_to_props(styles: &HashMap<String, String>) -> (Option<Font>, Option<Fill>, Option<String>) {
+fn style_to_props(styles: &HashMap<String, String>) -> (Option<Font>, Option<Fill>, Vec<Align>) {
     let mut font: Font = Font::new();
     let mut fill: Option<Fill> = None;
-    let mut align: Option<String> = None;
+    let mut aligns: Vec<Align> = vec![];
     for (key, value) in styles {
         match key.as_ref() {
             "background" => match color_to_argb(value) {
@@ -140,13 +146,24 @@ fn style_to_props(styles: &HashMap<String, String>) -> (Option<Font>, Option<Fil
                 font.underline = value.contains("underline");
                 font.strike = value.contains("line-through");
             },
-            "align" => align = Some(value.to_owned()),
+            "textAlign" => {
+                aligns.push(Align {
+                    direction: "horizontal".to_owned(),
+                    alignment: value.to_owned()
+                });
+            },
+            "verticalAlign" => {
+                aligns.push(Align {
+                    direction: "vertical".to_owned(),
+                    alignment: value.to_owned()
+                });
+            }
             "fontSize" => font.size = px_to_pt(&value),
             _ => ()
         }
     }
     
-    (Some(font), fill, align)
+    (Some(font), fill, aligns)
 }
 
 fn color_to_argb(color: &str) -> Option<String> {
@@ -277,7 +294,7 @@ fn style_to_props_test() {
     styles.insert(String::from("fontWeight"), String::from("bold"));
     styles.insert(String::from("fontStyle"), String::from("italic"));
     styles.insert(String::from("textDecoration"), String::from("underline"));
-    styles.insert(String::from("align"), String::from("left"));
+    styles.insert(String::from("textAlign"), String::from("left"));
     styles.insert(String::from("fontSize"), String::from("24px"));
 
     let (maybe_font, maybe_fill, maybe_align) = style_to_props(&styles);
@@ -288,7 +305,12 @@ fn style_to_props_test() {
     assert_eq!(font.italic, true);
     assert_eq!(font.underline, true);
     assert_eq!(maybe_fill.unwrap().color, Some(String::from("FFFF0000")));
-    assert_eq!(maybe_align, Some(String::from("left")));
+    assert_eq!(maybe_align, vec![
+        Align {
+            direction: String::from("horizontal"),
+            alignment: String::from("left")
+        }
+    ]);
 }
 
 #[test]
