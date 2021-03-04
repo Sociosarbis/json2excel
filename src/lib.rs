@@ -61,6 +61,7 @@ pub struct SheetData {
     plain: Option<Vec<Vec<Option<String>>>>,
     cols: Option<Vec<Option<ColumnData>>>,
     rows: Option<Vec<Option<RowData>>>,
+    default_row_height: Option<f32>,
     merged: Option<Vec<MergedCell>>,
 }
 
@@ -186,7 +187,7 @@ pub fn import_to_xlsx(raw_data: &JsValue) -> Vec<u8> {
 
         let sheet_info = get_sheet_info(sheet.name.clone(), sheet_index);
         zip.start_file(sheet_info.0.clone(), options).unwrap();
-        zip.write_all(get_sheet_data(rows, &sheet.cols, &sheet.rows, &sheet.merged).as_bytes()).unwrap();
+        zip.write_all(get_sheet_data(rows, &sheet).as_bytes()).unwrap();
         sheets_info.push(sheet_info);
     }
 
@@ -363,7 +364,10 @@ fn cell_offsets_to_index(row: usize, col: usize) -> String {
     format!("{}{}", String::from_utf8(chars).unwrap(), row + 1)
 }
 
-fn get_sheet_data(cells: Vec<Vec<InnerCell>>, columns: &Option<Vec<Option<ColumnData>>>, rows: &Option<Vec<Option<RowData>>>, merged: &Option<Vec<MergedCell>>) -> String {
+fn get_sheet_data(cells: Vec<Vec<InnerCell>>, sheet: &SheetData) -> String {
+    let columns = &sheet.cols;
+    let rows = &sheet.rows;
+    let merged = &sheet.merged;
     let mut worksheet = Element::new("worksheet");
     let mut sheet_view = Element::new("sheetView");
     sheet_view.add_attr("workbookViewId", "0");
@@ -372,8 +376,16 @@ fn get_sheet_data(cells: Vec<Vec<InnerCell>>, columns: &Option<Vec<Option<Column
     let mut sheet_format_pr = Element::new("sheetFormatPr");
     sheet_format_pr
         .add_attr("customHeight", "1")
-        .add_attr("defaultRowHeight", "15.75")
         .add_attr("defaultColWidth", "14.43");
+
+    match sheet.default_row_height {
+        Some(height) => {
+            sheet_format_pr.add_attr("defaultRowHeight", (height * HEIGHT_COEF).to_string());
+        },
+        None => {
+            sheet_format_pr.add_attr("defaultRowHeight", "15.75");
+        }
+    }
 
     let mut cols = Element::new("cols");
     let mut cols_children = vec!();
