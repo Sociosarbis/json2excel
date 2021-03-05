@@ -1,5 +1,5 @@
 import "../node_modules/fast-text-encoding/text";
-import wasmInit, { import_to_xlsx } from "../wasm/xlsx_import";
+import wasmInit, { import_to_xlsx, init_panic_hook } from "../wasm/xlsx_import";
 
 onmessage = function(e) {
     if (e.data.type === "convert"){
@@ -26,6 +26,7 @@ function doConvert(config){
 
         wasmInit(path).then(() => {
             isLoaded = true;
+            init_panic_hook();
             doConvert(config);
         }).catch(e => console.log(e));
     }

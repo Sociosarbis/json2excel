@@ -71,6 +71,11 @@ pub struct SpreadsheetData {
     styles: Option<Vec<Dict>>,
 }
 
+#[wasm_bindgen]
+pub fn init_panic_hook() {
+    console_error_panic_hook::set_once();
+}
+
 struct InnerCell {
     cell: String,
     value: CellValue,

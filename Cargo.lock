@@ -31,6 +31,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "console_error_panic_hook"
+version = "0.1.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b8d976903543e0c48546a91908f21588a680a8c8f984df9a5d69feccb2b2a211"
+dependencies = [
+ "cfg-if 0.1.7",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "crc32fast"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -241,6 +251,7 @@ checksum = "7d6f8ec44822dd71f5f221a5847fb34acd9060535c1211b70a05844c0f6383b1"
 name = "xlsx_import"
 version = "0.1.0"
 dependencies = [
+ "console_error_panic_hook",
  "serde",
  "serde_derive",
  "wasm-bindgen",
