@@ -191,7 +191,7 @@ pub fn import_to_xlsx(raw_data: &JsValue) -> Vec<u8> {
         }
 
         let sheet_info = get_sheet_info(sheet.name.clone(), sheet_index);
-        zip.start_file(sheet_info.0.clone(), options).unwrap();
+        zip.start_file(format!("xl/worksheets/{}.xml", sheet_info.0.clone()), options).unwrap();
         zip.write_all(get_sheet_data(rows, &sheet).as_bytes()).unwrap();
         sheets_info.push(sheet_info);
     }
@@ -533,8 +533,9 @@ fn get_shared_strings_data(shared_strings: Vec<String>, shared_strings_count: i3
 }
 
 fn get_sheet_info(name: Option<String>, index: usize) -> (String, String) {
-    let sheet_name = name.unwrap_or(format!("sheet{}", index + 1));
-    (format!("xl/worksheets/{}.xml", &sheet_name), sheet_name)
+    let sheet_file_name = format!("sheet{}", index + 1);
+    let sheet_name = name.unwrap_or(sheet_file_name.to_owned());
+    (sheet_file_name, sheet_name)
 }
 
 fn get_nav(sheets: Vec<(String, String)>) -> (String, String, String) {
@@ -615,12 +616,12 @@ fn get_nav(sheets: Vec<(String, String)>) -> (String, String, String) {
     let mut sheet_children = vec!();
 
     let mut last_id = 3;
-    for (index, (_, name)) in sheets.iter().enumerate() {
+    for (index, (file_name, name)) in sheets.iter().enumerate() {
         let mut sheet_relationship = Element::new("Relationship");
         sheet_relationship
             .add_attr("Id", format!("rId{}", last_id))
             .add_attr("Type", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet")
-            .add_attr("Target", format!("worksheets/{}.xml", name));
+            .add_attr("Target", format!("worksheets/{}.xml", file_name));
         relationships_children.push(sheet_relationship);   
         let mut sheet_element = Element::new("sheet");
         sheet_element
