@@ -50,8 +50,15 @@ pub struct MergedCell {
 
 #[derive(Deserialize)]
 pub struct Cell {
-    pub v: Option<String>,
+    pub v: Option<Value>,
     pub s: Option<u32>,
+}
+
+#[derive(Deserialize)]
+#[serde(untagged)]
+pub enum Value {
+    Number(f64),
+    String(String)
 }
 
 #[derive(Deserialize)]
@@ -127,21 +134,19 @@ pub fn import_to_xlsx(raw_data: &JsValue) -> Vec<u8> {
 
                                 match &cell.v {
                                     Some(value) => {
-                                        if !value.is_empty() {
-                                            match value.parse::<f64>() {
-                                                Ok(_) => {
-                                                    inner_cell.value = CellValue::Value(value.to_owned());
-                                                },
-                                                Err(_) => {
-                                                    shared_strings_count += 1;
-                                                    match shared_strings.iter().position(|s| s == value) {
-                                                        Some(index) => {
-                                                            inner_cell.value = CellValue::SharedString(index as u32);
-                                                        },
-                                                        None => {
-                                                            inner_cell.value = CellValue::SharedString(shared_strings.len() as u32);
-                                                            shared_strings.push(value.to_owned());
-                                                        }
+                                        match value {
+                                            Value::Number(v) => {
+                                                inner_cell.value = CellValue::Value(v.to_string());
+                                            }
+                                            Value::String(v) => {
+                                                shared_strings_count += 1;
+                                                match shared_strings.iter().position(|s| s == v) {
+                                                    Some(index) => {
+                                                        inner_cell.value = CellValue::SharedString(index as u32);
+                                                    },
+                                                    None => {
+                                                        inner_cell.value = CellValue::SharedString(shared_strings.len() as u32);
+                                                        shared_strings.push(v.to_owned());
                                                     }
                                                 }
                                             }
