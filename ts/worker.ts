@@ -44,21 +44,27 @@ function onData(result: ArrayBuffer | Uint8Array, uid?: number) {
     });
 }
 async function doConvert(config: Config){
-    if ('WebAssembly' in self) {
-        if (isLoaded) {
-            const result = import_to_xlsx(config.data);
-            onData(result, config.uid)
-        } else {
-            const path = `${config.wasmPath}?${__buildVersion}`;
-    
-            wasmInit(path).then(() => {
+    try {
+        if ('WebAssembly' in self) {
+            if (isLoaded) {
+                const result = import_to_xlsx(config.data);
+                onData(result, config.uid)
+            } else {
+                const path = `${config.wasmPath}?${__buildVersion}`;
+                await wasmInit(path);
                 isLoaded = true;
                 init_panic_hook();
                 doConvert(config);
-            }).catch(e => console.log(e));
+            }
+        } else {
+            const result = await import_to_xlsx_ts(config.data);
+            onData(result, config.uid); 
         }
-    } else {
-        const result = await import_to_xlsx_ts(config.data);
-        onData(result, config.uid); 
+    } catch (e) {
+        postMessage({
+            uid: config.uid || (new Date()).valueOf(),
+            type: 'error',
+            message: e.message
+        })
     }
 }
