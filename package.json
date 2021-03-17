@@ -6,7 +6,7 @@
     "convert",
     "wasm"
   ],
-  "version": "1.0.2",
+  "version": "1.0.3",
   "license": "MIT",
   "author": {
     "name": "Aleksei Kolosov"
@@ -31,6 +31,7 @@
     "@babel/preset-env": "^7.13.10",
     "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-node-resolve": "^11.2.0",
+    "@rollup/plugin-replace": "^2.4.1",
     "@rollup/plugin-typescript": "^8.2.0",
     "core-js": "^3.9.1",
     "rollup": "^2.41.0",

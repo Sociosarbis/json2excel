@@ -21,6 +21,9 @@ type Config = {
     wasmPath?: string
     data: TableJson
 }
+
+declare var __buildVersion: string;
+
 onmessage = function(e) {
     if (e.data.type === "convert"){
         doConvert(e.data);
@@ -46,7 +49,7 @@ async function doConvert(config: Config){
             const result = import_to_xlsx(config.data);
             onData(result, config.uid)
         } else {
-            const path = config.wasmPath || "https://cdn.dhtmlx.com/libs/json2excel/1.0/lib.wasm";
+            const path = `${config.wasmPath}?${__buildVersion}`;
     
             wasmInit(path).then(() => {
                 isLoaded = true;

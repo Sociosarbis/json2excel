@@ -1,6 +1,8 @@
 import babel from '@rollup/plugin-babel'
 import typescript from '@rollup/plugin-typescript'
 import { nodeResolve } from '@rollup/plugin-node-resolve'
+import replace from '@rollup/plugin-replace'
+import packageInfo from './package.json'
 
 export default {
   input: "ts/worker.ts",
@@ -20,6 +22,10 @@ export default {
     typescript(),
     nodeResolve({
       mainFields: ['module', 'browser', 'main']
+    }),
+    replace({
+      preventAssignment: true,
+      __buildVersion: JSON.stringify(packageInfo.version)
     })
   ],
   moduleContext:() => "self"
