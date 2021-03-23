@@ -9,7 +9,7 @@ export default {
   output:{
   	format: "iife",
   	file: "json2excel.js",
-    banner: `importScripts('https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.2.1/exceljs.min.js');`,
+    banner: `importScripts('https://cdnjs.cloudflare.com/ajax/libs/exceljs/2.0.1/exceljs.min.js');`,
     globals: {
       'exceljs': 'ExcelJS',
     },
