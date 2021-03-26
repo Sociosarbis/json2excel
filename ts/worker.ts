@@ -24,7 +24,7 @@ type Config = {
 
 declare var __buildVersion: string;
 
-onmessage = function(e) {
+self.onmessage = function(e: MessageEvent) {
     if (e.data.type === "convert"){
         doConvert(e.data);
     }
@@ -37,7 +37,7 @@ function onData(result: ArrayBuffer | Uint8Array, uid?: number) {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,"
     });
 
-    postMessage({
+    self.postMessage({
         uid: uid || (new Date()).valueOf(),
         type: "ready",
         blob
@@ -61,7 +61,7 @@ async function doConvert(config: Config){
             onData(result, config.uid); 
         }
     } catch (e) {
-        postMessage({
+        self.postMessage({
             uid: config.uid || (new Date()).valueOf(),
             type: 'error',
             message: e.message
